@@ -7,6 +7,7 @@ import 'screen/setting.dart';
 import 'screen/signout.dart';
 import 'screen/video.dart';
 import 'screen/join.dart';
+import 'screen/splash.dart';
 
 
 
@@ -32,8 +33,10 @@ class Tutorain extends StatelessWidget {
         '/signout' :(context) => const Signout(),
         '/video' :(context) => const Video(),
         '/join' :(context) => const Join(),
-      },
-      initialRoute: '/',
+        '/splash': (context) => const Splash(),
+
+              },
+      initialRoute: '/splash',
 
       //home: Homecontroller(), 
       
