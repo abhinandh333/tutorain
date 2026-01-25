@@ -14,11 +14,12 @@ class _MaaiState extends State<Maai> {
 
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
+  final TextEditingController _codeController = TextEditingController();
 
-  // 📸 Pick image from camera
-  Future<void> pickImage() async {
+  // Pick image from camera or gallery
+  Future<void> pickImage(ImageSource source) async {
     final XFile? image = await _picker.pickImage(
-      source: ImageSource.camera,
+      source: source,
       imageQuality: 80,
     );
 
@@ -26,6 +27,27 @@ class _MaaiState extends State<Maai> {
       setState(() {
         _selectedImage = File(image.path);
       });
+    }
+  }
+
+  // Check correctness function
+  void checkCorrectness() {
+    if (_selectedImage != null) {
+      // Logic for image correctness
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Checking correctness for image...")),
+      );
+    } else if (_codeController.text.isNotEmpty) {
+      // Logic for code correctness
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                "Checking correctness for code: ${_codeController.text}")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please upload an image or enter a code")),
+      );
     }
   }
 
@@ -37,123 +59,147 @@ class _MaaiState extends State<Maai> {
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 72, 126, 72),
       ),
-
-      body: SingleChildScrollView(
-        child: Padding(
+      body: SafeArea(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
 
-              // 🔷 Heading
+              // Heading
               const Text(
                 "Welcome to Tutorain",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               const Text(
                 "Scan your answer to check its correctness with MAAI — MA's AI.",
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-
               const SizedBox(height: 24),
 
-              // 🖼 Scan Image Card
+              // Image or Code Input Card
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.green.shade50,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black12,
-                      blurRadius: 10,
+                      blurRadius: 8,
                       offset: Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Column(
                   children: [
+                    // Image preview or code input
                     Container(
                       height: 180,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF3F6F8),
+                        color: _selectedImage == null
+                            ? Colors.green.shade100
+                            : Colors.green.shade200,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.grey.shade300),
+                        border: Border.all(color: Colors.green.shade300),
                       ),
-                      child: _selectedImage == null
-                          ? const Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.document_scanner,
-                                  size: 60,
-                                  color: Colors.green,
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  "Scan or Upload Your Answer",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            )
-                          : ClipRRect(
+                      child: _selectedImage != null
+                          ? ClipRRect(
                               borderRadius: BorderRadius.circular(16),
                               child: Image.file(
                                 _selectedImage!,
                                 fit: BoxFit.cover,
-                                width: double.infinity,
+                              ),
+                            )
+                          : Center(
+                              child: TextField(
+                                controller: _codeController,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                decoration: const InputDecoration(
+                                  hintText: "Enter Question Code",
+                                  border: InputBorder.none,
+                                ),
                               ),
                             ),
                     ),
-
                     const SizedBox(height: 16),
 
-                    // 📷 Scan Button
-                    ElevatedButton.icon(
-                      onPressed: pickImage,
-                      icon: const Icon(Icons.camera_alt),
-                      label: const Text("Scan Image"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 14,
-                          horizontal: 20,
+                    // Camera & Gallery Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () => pickImage(ImageSource.camera),
+                          icon: const Icon(Icons.camera_alt),
+                          label: const Text("Camera"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                        ElevatedButton.icon(
+                          onPressed: () => pickImage(ImageSource.gallery),
+                          icon: const Icon(Icons.photo_library),
+                          label: const Text("Gallery"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.shade700,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
               ),
 
+              const SizedBox(height: 24),
+
+              // ✅ Check Correctness Button
+              SizedBox(
+                height: 55,
+                child: ElevatedButton.icon(
+                  onPressed: (_selectedImage != null ||
+                          _codeController.text.isNotEmpty)
+                      ? checkCorrectness
+                      : null, // disabled if no input
+                  icon: const Icon(Icons.check_circle),
+                  label: const Text(
+                    "Check Correctness",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade800,
+                    disabledBackgroundColor: Colors.green.shade300,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                ),
+              ),
+
               const SizedBox(height: 32),
 
-              // 🚀 Join Tutorain Button
-              Container(
+              // Join Tutorain Button
+              SizedBox(
                 height: 60,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 72, 126, 72),
-                      Color.fromARGB(255, 45, 90, 45),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(18),
-                ),
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/join');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    backgroundColor: Colors.green.shade700,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),
                     ),
@@ -173,40 +219,22 @@ class _MaaiState extends State<Maai> {
         ),
       ),
 
-      // 🔽 Bottom Navigation
+      // Bottom Navigation
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: indexNUM,
         showUnselectedLabels: true,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.smart_toy),
-            label: "MAAI",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school_outlined),
-            label: "Class",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: "Setting",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.smart_toy), label: "MAAI"),
+          BottomNavigationBarItem(icon: Icon(Icons.school_outlined), label: "Class"),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting"),
         ],
         onTap: (index) {
           setState(() => indexNUM = index);
-
-          if (index == 0) {
-            Navigator.pushNamed(context, '/');
-          } else if (index == 1) {
-            Navigator.pushNamed(context, '/maai');
-          } else if (index == 2) {
-            Navigator.pushNamed(context, '/class');
-          } else if (index == 3) {
-            Navigator.pushNamed(context, '/setting');
-          }
+          if (index == 0) Navigator.pushNamed(context, '/');
+          if (index == 1) Navigator.pushNamed(context, '/maai');
+          if (index == 2) Navigator.pushNamed(context, '/class');
+          if (index == 3) Navigator.pushNamed(context, '/setting');
         },
       ),
     );
