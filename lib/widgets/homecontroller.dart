@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../screen/ai_pulse_icon.dart';
+
+
 
 class Homecontroller extends StatefulWidget {
   const Homecontroller({super.key});
@@ -180,7 +183,7 @@ Widget build(BuildContext context) {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade700,
+                  color: const Color.fromARGB(255, 26, 155, 75),
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: const [
                     BoxShadow(
@@ -191,7 +194,7 @@ Widget build(BuildContext context) {
                   ],
                 ),
                 child: const Text(
-                  "🚀 Join Our Class Now!",
+                  "Join Our live Class Now!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 28,
@@ -212,9 +215,107 @@ Widget build(BuildContext context) {
           ),
 
           const SizedBox(height: 30),
+
+          // maai banner
+        const SizedBox(height: 20),
+
+// ---------- MAAI BANNER ----------
+GestureDetector(
+  onTap: () {
+    Navigator.pushNamed(context, '/maai');
+  },
+  child: Container(
+    margin: const EdgeInsets.symmetric(horizontal: 16),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.black26,
+          blurRadius: 6,
+          offset: Offset(0, 4),
+        ),
+      ],
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: Image.asset(
+        'assets/images/banner8.png',
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 170,
+      ),
+    ),
+  ),
+),
+
+const SizedBox(height: 30),
+
+
+
+
+
+//maai describtion
+
+Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+  child: Text(
+    "MAAI is Tutorain’s AI-powered answer checker that analyzes student responses through image scanning and smart comparison.",
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w500,
+      color: Colors.black87,
+      height: 1.5,
+    ),
+  ),
+),
+
+
+
+
+Column(
+  children: [
+    const AiPulseIcon(),
+    const SizedBox(height: 12),
+
+    ElevatedButton(
+      onPressed: () {
+        Navigator.pushNamed(context, '/maai');
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 119, 22, 143),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+      child: const Text(
+        "Use MAAI",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+    ),
+  ],
+),
+
+ const SizedBox(height: 20),
+
         ],
       ),
     ),
+
+
+
+//maai page
+
+
+
+
+
+
 
      bottomNavigationBar: BottomNavigationBar(
         showUnselectedLabels: true,
