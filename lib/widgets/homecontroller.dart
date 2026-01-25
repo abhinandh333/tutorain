@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../screen/ai_pulse_icon.dart';
+import 'package:tutorain_app/screen/url_launcher.dart';
+
+
+
 
 
 
@@ -24,7 +28,7 @@ class _HomecontrollerState extends State<Homecontroller> {
     },
     {
       "image": "assets/images/banner2.png",
-      "route": "/video",
+      "route": "/class",
     },
     {
       "image": "assets/images/banner3.png",
@@ -36,11 +40,11 @@ class _HomecontrollerState extends State<Homecontroller> {
     },
         {
       "image": "assets/images/banner5.png",
-      "route": "/join",
+      "route": "/maai",
     },
         {
       "image": "assets/images/banner6.png",
-      "route": "/join",
+      "route": "/maai",
     },
     
   ];
@@ -50,13 +54,13 @@ class _HomecontrollerState extends State<Homecontroller> {
     super.initState();
 
     // AUTO SLIDE TIMER
-    Timer.periodic(const Duration(seconds: 3), (timer) {
+    Timer.periodic(const Duration(seconds: 2), (timer) {
       if (!mounted) return;
 
       _currentPage = (_currentPage + 1) % banners.length;
       _pageController.animateToPage(
         _currentPage,
-        duration: const Duration(milliseconds: 350),
+        duration: const Duration(seconds: 1),
         curve: Curves.easeInOut,
       );
     });
@@ -183,7 +187,7 @@ Widget build(BuildContext context) {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 26, 155, 75),
+                  color: const Color.fromARGB(255, 21, 114, 56),
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: const [
                     BoxShadow(
@@ -239,7 +243,7 @@ GestureDetector(
     child: ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: Image.asset(
-        'assets/images/banner8.png',
+        'assets/images/banner7.png',
         fit: BoxFit.cover,
         width: double.infinity,
         height: 170,
@@ -298,12 +302,22 @@ Column(
         ),
       ),
     ),
+
+        // 🔹 Animated Help Footer (FIXED POSITION)
+    const AnimatedHelpFooter(),
   ],
 ),
 
  const SizedBox(height: 20),
 
-        ],
+      
+
+
+
+// help 2
+
+
+  ],
       ),
     ),
 

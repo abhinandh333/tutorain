@@ -24,7 +24,7 @@ class _SplashState extends State<Splash>
     )..repeat();
 
     // LOGO ZOOM ANIMATION
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.1)
+    _scaleAnimation = Tween<double>(begin: 0.3 , end: 10.0)
         .animate(
           CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
         );
