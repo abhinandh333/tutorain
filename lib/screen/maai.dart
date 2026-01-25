@@ -66,12 +66,12 @@ class _MaaiState extends State<Maai> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                "Welcome to Tutorain",
+                "I’m MAAI -MA's AI",
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               const Text(
-                "Scan your answer to check its correctness with MAAI — MA's AI.",
+                "Please enter your question code and upload the answer image to check its accuracy.",
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 24),
@@ -229,22 +229,50 @@ class _MaaiState extends State<Maai> {
       ),
 
       // Bottom Navigation
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: indexNUM,
+        bottomNavigationBar: BottomNavigationBar(
         showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.smart_toy), label: "MAAI"),
-          BottomNavigationBarItem(icon: Icon(Icons.school_outlined), label: "Class"),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting"),
-        ],
-        onTap: (index) {
-          setState(() => indexNUM = index);
-          if (index == 0) Navigator.pushNamed(context, '/');
-          if (index == 1) Navigator.pushNamed(context, '/maai');
-          if (index == 2) Navigator.pushNamed(context, '/class');
-          if (index == 3) Navigator.pushNamed(context, '/setting');
-        },
+        items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: "Home",
+          backgroundColor: const Color.fromARGB(255, 1, 53, 51)),
+
+          BottomNavigationBarItem(
+          icon: Icon(Icons.smart_toy),
+          label: "MAAI",
+          backgroundColor: const Color.fromARGB(255, 1, 53, 51)),
+        
+          
+          BottomNavigationBarItem(
+          icon: Icon(Icons.school_outlined),
+          label: "class",
+          backgroundColor: const Color.fromARGB(255, 1, 53, 51)),
+
+          BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: "Setting",
+          backgroundColor: const Color.fromARGB(255, 1, 53, 51))
+      ],
+      
+      currentIndex: indexNUM,
+      onTap: (int index){
+        if (index == 1){
+          Navigator.pushNamed(context, '/maai');
+        }   
+        else if (index ==0){
+          Navigator.pushNamed(context, '/');
+        }  
+
+        else if (index ==2){
+          Navigator.pushNamed(context, '/class');
+        } 
+        else if (index ==3){
+          Navigator.pushNamed(context, '/setting');
+        }        
+        setState((){
+          indexNUM = index;
+        });
+      },
       ),
     );
   }
