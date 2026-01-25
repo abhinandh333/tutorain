@@ -99,3 +99,5 @@ flutter:
   assets:
     - assets/images/
     - assets/icon/
+    - assets/icon/logorm.png
+

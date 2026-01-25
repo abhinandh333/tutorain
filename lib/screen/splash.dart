@@ -17,11 +17,13 @@ class _SplashState extends State<Splash>
   void initState() {
     super.initState();
 
+    // ROTATION CONTROLLER (slow)
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 4), // slower rotation
     )..repeat();
 
+    // SPLASH TIMER (1.5 seconds)
     Timer(const Duration(milliseconds: 1500), () {
       Navigator.pushReplacementNamed(context, '/');
     });
@@ -45,25 +47,25 @@ class _SplashState extends State<Splash>
             // ROTATING CIRCLE
             RotationTransition(
               turns: _controller,
-              child: SizedBox(
-                width: 140,
-                height: 140,
-                child: CircularProgressIndicator(
-                  strokeWidth: 4,
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
+              child: Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 3,
+                  ),
                 ),
               ),
             ),
 
-            // CENTER "T"
-            const Text(
-              "T",
-              style: TextStyle(
-                fontSize: 64,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 2,
-              ),
+            // LOGO IN CENTER
+            Image.asset(
+              'assets/icon/logorm.png',
+              width: 80,
+              height: 80,
+              fit: BoxFit.contain,
             ),
           ],
         ),
