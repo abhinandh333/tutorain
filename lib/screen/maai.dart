@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'camera_overlay.dart'; // Make sure this exists
 
 class Maai extends StatefulWidget {
   const Maai({super.key});
@@ -10,13 +11,12 @@ class Maai extends StatefulWidget {
 }
 
 class _MaaiState extends State<Maai> {
-  int indexNUM = 1; // MAAI selected
-
+  int indexNUM = 1; // Bottom nav selected index
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
   final TextEditingController _codeController = TextEditingController();
 
-  // Pick image from camera or gallery
+  // Pick image from camera/gallery
   Future<void> pickImage(ImageSource source) async {
     final XFile? image = await _picker.pickImage(
       source: source,
@@ -30,23 +30,23 @@ class _MaaiState extends State<Maai> {
     }
   }
 
-  // Check correctness function
+  // Check correctness
   void checkCorrectness() {
     if (_selectedImage != null) {
-      // Logic for image correctness
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Checking correctness for image...")),
       );
     } else if (_codeController.text.isNotEmpty) {
-      // Logic for code correctness
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                "Checking correctness for code: ${_codeController.text}")),
+          content: Text(
+              "Checking correctness for code: ${_codeController.text}"),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please upload an image or enter a code")),
+        const SnackBar(
+            content: Text("Please upload an image or enter a code")),
       );
     }
   }
@@ -65,8 +65,6 @@ class _MaaiState extends State<Maai> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-
-              // Heading
               const Text(
                 "Welcome to Tutorain",
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
@@ -78,7 +76,7 @@ class _MaaiState extends State<Maai> {
               ),
               const SizedBox(height: 24),
 
-              // Image or Code Input Card
+              // Image or Code Card
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -94,7 +92,7 @@ class _MaaiState extends State<Maai> {
                 ),
                 child: Column(
                   children: [
-                    // Image preview or code input
+                    // Image Preview / Code Input
                     Container(
                       height: 180,
                       width: double.infinity,
@@ -133,15 +131,28 @@ class _MaaiState extends State<Maai> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton.icon(
-                          onPressed: () => pickImage(ImageSource.camera),
+                          onPressed: () async {
+                            final imagePath = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const CameraOverlayScreen(),
+                              ),
+                            );
+
+                            if (imagePath != null) {
+                              setState(() {
+                                _selectedImage = File(imagePath);
+                              });
+                            }
+                          },
                           icon: const Icon(Icons.camera_alt),
-                          label: const Text("Camera"),
+                          label: const Text("Scan Image"),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                             padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 16),
+                                vertical: 14, horizontal: 20),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(14),
                             ),
                           ),
                         ),
@@ -152,9 +163,9 @@ class _MaaiState extends State<Maai> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green.shade700,
                             padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 16),
+                                vertical: 14, horizontal: 20),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(14),
                             ),
                           ),
                         ),
@@ -163,17 +174,16 @@ class _MaaiState extends State<Maai> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 24),
 
-              // ✅ Check Correctness Button
+              // Check Correctness Button
               SizedBox(
                 height: 55,
                 child: ElevatedButton.icon(
                   onPressed: (_selectedImage != null ||
                           _codeController.text.isNotEmpty)
                       ? checkCorrectness
-                      : null, // disabled if no input
+                      : null,
                   icon: const Icon(Icons.check_circle),
                   label: const Text(
                     "Check Correctness",
@@ -188,7 +198,6 @@ class _MaaiState extends State<Maai> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 32),
 
               // Join Tutorain Button
