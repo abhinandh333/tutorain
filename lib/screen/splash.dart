@@ -10,21 +10,27 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash>
     with SingleTickerProviderStateMixin {
-
   late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // ROTATION CONTROLLER (slow)
+    // ROTATION CONTROLLER
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4), // slower rotation
+      duration: const Duration(seconds: 8), // slow rotation
     )..repeat();
 
-    // SPLASH TIMER (1.5 seconds)
-    Timer(const Duration(milliseconds: 1500), () {
+    // LOGO ZOOM ANIMATION
+    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.1)
+        .animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+        );
+
+    // SPLASH TIMER (3 seconds)
+    Timer(const Duration(seconds: 2), () {
       Navigator.pushReplacementNamed(context, '/');
     });
   }
@@ -43,29 +49,38 @@ class _SplashState extends State<Splash>
         child: Stack(
           alignment: Alignment.center,
           children: [
-
             // ROTATING CIRCLE
-            RotationTransition(
-              turns: _controller,
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (_, child) {
+                return Transform.rotate(
+                  angle: _controller.value * 2 * 3.1415926535,
+                  child: child,
+                );
+              },
               child: Container(
-                width: 160,
-                height: 160,
+                width: 180,
+                height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white,
-                    width: 3,
+                    color: Colors.white.withAlpha((0.7 * 255).toInt()),
+
+                    width: 4,
                   ),
                 ),
               ),
             ),
 
-            // LOGO IN CENTER
-            Image.asset(
-              'assets/icon/logorm.png',
-              width: 80,
-              height: 80,
-              fit: BoxFit.contain,
+            // LOGO WITH ZOOM EFFECT
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: Image.asset(
+                'assets/icon/logorm.png',
+                width: 100,
+                height: 100,
+                fit: BoxFit.contain,
+              ),
             ),
           ],
         ),
