@@ -31,29 +31,35 @@ class _ProfileState extends State<Profile> {
   }
 
   void login() async {
-    final mobile = mobileController.text.trim();
-    final password = passwordController.text.trim();
+  final mobile = mobileController.text.trim();
+  final password = passwordController.text.trim();
 
-    if (mobile.isEmpty || password.isEmpty) {
-      setState(() => message = "Please enter mobile and password");
-      return;
-    }
-
-    setState(() => message = "Logging in...");
-    final result = await ApiService.login(mobile, password);
-
-    if (result['success']) {
-      setState(() {
-        loggedIn = true;
-        savedMobile = mobile;
-        message = "Login successful!";
-      });
-    } else {
-      setState(() {
-        message = result['error'];
-      });
-    }
+  if (mobile.isEmpty || password.isEmpty) {
+    setState(() => message = "Please enter mobile and password");
+    return;
   }
+
+  setState(() => message = "Logging in...");
+  final result = await ApiService.login(mobile, password);
+
+  if (result['success']) {
+    // ✅ Navigate to ClassScreen after login
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, '/class');
+
+    // Optional: save login info locally if needed
+    setState(() {
+      loggedIn = true;
+      savedMobile = mobile;
+      message = "Login successful!";
+    });
+  } else {
+    setState(() {
+      message = result['error'] ?? "Login failed";
+    });
+  }
+}
+
 
   void logout() async {
     await ApiService.logout();

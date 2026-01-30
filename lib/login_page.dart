@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -13,20 +14,25 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   String message = "";
 
-  void login() async {
-    final result = await ApiService.login(
-      mobileController.text,
-      passwordController.text,
-    );
+void login() async {
+  final result = await ApiService.login(
+    mobileController.text,
+    passwordController.text,
+  );
 
+  if (!mounted) return;
+
+  if (result.containsKey("token")) {
+    // ✅ Login success → go to ClassScreen
+    Navigator.pushReplacementNamed(context, '/class');
+;
+  } else {
     setState(() {
-      if (result.containsKey("token")) {
-        message = "Login Successful! Token: ${result['token']}";
-      } else {
-        message = result['error'];
-      }
+      message = result['error'] ?? "Login failed";
     });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
