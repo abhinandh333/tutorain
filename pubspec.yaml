@@ -38,6 +38,8 @@ dependencies:
   image_picker: ^0.8.7+4
   webview_flutter: ^4.7.0
   url_launcher: ^6.2.5
+  http: ^1.1.0   # For HTTP requests
+  shared_preferences: ^2.1.0  # To store token locally
 
     
   
