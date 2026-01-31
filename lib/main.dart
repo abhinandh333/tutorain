@@ -27,7 +27,7 @@ class Tutorain extends StatelessWidget {
       routes: {
         '/' :(context) => const Homecontroller(),
         '/maai' :(context) => const Maai(),
-        '/class' :(context) =>const  Class(),
+        '/class' :(context) =>const  ClassScreen(),
         '/setting' :(context) =>const  Setting(),
         '/profile' :(context) => const Profile(),
         '/signout' :(context) => const Signout(),

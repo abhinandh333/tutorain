@@ -9,11 +9,14 @@ import 'package:tutorain_app/screen/url_launcher.dart';
 
 
 class Homecontroller extends StatefulWidget {
-  const Homecontroller({super.key});
+  final Map<String, dynamic>? student;
+
+  const Homecontroller({super.key, this.student});
 
   @override
   State<Homecontroller> createState() => _HomecontrollerState();
 }
+
 
 class _HomecontrollerState extends State<Homecontroller> {
   int indexNUM = 0;
@@ -88,31 +91,46 @@ Widget build(BuildContext context) {
       centerTitle: true,
       backgroundColor: const Color.fromARGB(255, 72, 126, 72),
     ),
-    drawer: Drawer(
-      child: ListView(
-        children: [
-          const UserAccountsDrawerHeader(
-            accountName: Text("Abhinandh"),
-            accountEmail: Text("abhi@gmail.com"),
+drawer: Drawer(
+  child: ListView(
+    children: [
+      // ✅ Dynamic UserAccountsDrawerHeader
+      UserAccountsDrawerHeader(
+        accountName: Text(widget.student != null ? widget.student!['name'] : "Guest"),
+        accountEmail: Text(widget.student != null ? widget.student!['mobile'] : "No number"),
+        currentAccountPicture: CircleAvatar(
+          backgroundColor: Colors.white,
+          child: Text(
+            widget.student != null
+                ? widget.student!['name'][0].toUpperCase()
+                : "G",
+            style: const TextStyle(fontSize: 24, color: Colors.black),
           ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text("Profile"),
-            onTap: () => Navigator.pushNamed(context, '/profile'),
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text("Setting"),
-            onTap: () => Navigator.pushNamed(context, '/setting'),
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text("Sign Out"),
-            onTap: () => Navigator.pushNamed(context, '/signout'),
-          ),
-        ],
+        ),
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 72, 126, 72),
+        ),
       ),
-    ),
+
+      ListTile(
+        leading: const Icon(Icons.person),
+        title: const Text("Profile"),
+        onTap: () => Navigator.pushNamed(context, '/profile'),
+      ),
+      ListTile(
+        leading: const Icon(Icons.settings),
+        title: const Text("Setting"),
+        onTap: () => Navigator.pushNamed(context, '/setting'),
+      ),
+      ListTile(
+        leading: const Icon(Icons.logout),
+        title: const Text("Sign Out"),
+        onTap: () => Navigator.pushNamed(context, '/signout'),
+      ),
+    ],
+  ),
+),
+
 
     // ---------------- BODY ----------------
     body: SingleChildScrollView(
