@@ -94,17 +94,70 @@ class _ClassScreenState extends State<ClassScreen> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
+if (student == null) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text("My Class"),
+      centerTitle: true,
+      elevation: 0,
+    ),
+    body: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.lock_outline,
+              size: 70,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 20),
 
-    if (student == null) {
-      return const Scaffold(
-        body: Center(
-          child: Text(
-            "No student data found",
-            style: TextStyle(fontSize: 18),
-          ),
+            const Text(
+              "Login Required",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            const Text(
+              "Please login to access your class.\nNo student data found.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/profile');
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text(
+                "Login",
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
         ),
-      );
-    }
+      ),
+    ),
+  );
+}
+
 
     return Scaffold(
       appBar: AppBar(

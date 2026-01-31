@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'api_service.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import './widgets/homecontroller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,54 +11,36 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController mobileController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  String message = "";
 
-void login() async {
-  final result = await ApiService.login(
-    mobileController.text,
-    passwordController.text,
-  );
+  void login() async {
+    if (mobileController.text.isEmpty) return;
 
-  if (!mounted) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('mobile', mobileController.text);
 
-  if (result.containsKey("token")) {
-    // ✅ Login success → go to ClassScreen
-    Navigator.pushReplacementNamed(context, '/class');
-;
-  } else {
-    setState(() {
-      message = result['error'] ?? "Login failed";
-    });
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Homecontroller(),
+      ),
+    );
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Login")),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             TextField(
               controller: mobileController,
-              decoration: const InputDecoration(labelText: "Mobile"),
+              decoration: const InputDecoration(labelText: "Enter Mobile"),
               keyboardType: TextInputType.phone,
             ),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: "Password"),
-              obscureText: true,
-            ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: login,
-              child: const Text("Login"),
-            ),
-            const SizedBox(height: 20),
-            Text(message),
+            ElevatedButton(onPressed: login, child: const Text("Continue")),
           ],
         ),
       ),

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../screen/ai_pulse_icon.dart';
 import 'package:tutorain_app/screen/url_launcher.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 
@@ -19,6 +21,8 @@ class Homecontroller extends StatefulWidget {
 
 
 class _HomecontrollerState extends State<Homecontroller> {
+  String? name;
+  String? mobile;
   int indexNUM = 0;
   int _currentPage = 0;
 
@@ -55,6 +59,9 @@ class _HomecontrollerState extends State<Homecontroller> {
   @override
   void initState() {
     super.initState();
+    loadUserData();
+
+    
 
     // AUTO SLIDE TIMER
     Timer.periodic(const Duration(seconds: 2), (timer) {
@@ -68,6 +75,54 @@ class _HomecontrollerState extends State<Homecontroller> {
       );
     });
   }
+
+
+Future<void> loadUserData() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  setState(() {
+    name = prefs.getString('name') ?? '';
+    mobile = prefs.getString('mobile') ?? '';
+  });
+  if (name == null || name!.isEmpty) {
+    await askUserName();
+  }
+}
+
+ Future<void> askUserName() async {
+  final controller = TextEditingController();
+
+  await showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text("Enter your name"),
+      content: TextField(
+        controller: controller,
+        decoration: const InputDecoration(hintText: "Your name"),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final prefs = await SharedPreferences.getInstance();
+            if (controller.text.trim().isNotEmpty) {
+              await prefs.setString('name', controller.text.trim());
+              setState(() => name = controller.text.trim());
+            }
+            Navigator.pop(context);
+          },
+          child: const Text("Save"),
+        ),
+      ],
+    ),
+  );
+}
+
+
+
 
   @override
   void dispose() {
@@ -95,22 +150,21 @@ drawer: Drawer(
   child: ListView(
     children: [
       // ✅ Dynamic UserAccountsDrawerHeader
-      UserAccountsDrawerHeader(
-        accountName: Text(widget.student != null ? widget.student!['name'] : "Guest"),
-        accountEmail: Text(widget.student != null ? widget.student!['mobile'] : "No number"),
-        currentAccountPicture: CircleAvatar(
-          backgroundColor: Colors.white,
-          child: Text(
-            widget.student != null
-                ? widget.student!['name'][0].toUpperCase()
-                : "G",
-            style: const TextStyle(fontSize: 24, color: Colors.black),
-          ),
-        ),
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(255, 72, 126, 72),
-        ),
-      ),
+                    UserAccountsDrawerHeader(
+                accountName: Text(name == null || name!.isEmpty ? "Guest" : name!),
+                accountEmail: Text(mobile == null || mobile!.isEmpty ? "No number" : mobile!),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Text(
+                    name == null || name!.isEmpty ? "G" : name![0].toUpperCase(),
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
+                  ),
+                ),
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 72, 126, 72),
+                ),
+              ),
+
 
       ListTile(
         leading: const Icon(Icons.person),
@@ -118,14 +172,14 @@ drawer: Drawer(
         onTap: () => Navigator.pushNamed(context, '/profile'),
       ),
       ListTile(
-        leading: const Icon(Icons.settings),
-        title: const Text("Setting"),
-        onTap: () => Navigator.pushNamed(context, '/setting'),
+        leading: const Icon(Icons.cast_for_education_outlined),
+        title: const Text("my class"),
+        onTap: () => Navigator.pushNamed(context, '/class'),
       ),
       ListTile(
-        leading: const Icon(Icons.logout),
-        title: const Text("Sign Out"),
-        onTap: () => Navigator.pushNamed(context, '/signout'),
+        leading: const Icon(Icons.add),
+        title: const Text("Request for live session"),
+        onTap: () => Navigator.pushNamed(context, '/join'),
       ),
     ],
   ),
@@ -137,6 +191,8 @@ drawer: Drawer(
       child: Column(
         children: [
           const SizedBox(height: 20),
+
+
 
           // ---------- AUTO SLIDER ----------
           SizedBox(
@@ -189,12 +245,88 @@ drawer: Drawer(
 
           const SizedBox(height: 20),
 
+
           const Text(
             "Welcome to Tutorain 👋",
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
 
-          const SizedBox(height: 20),
+          
+
+// ---------- SMALL USER INFO CARD ----------
+Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  child: GestureDetector(
+    onTap: () {
+      if (name == null || name!.isEmpty) {
+        Navigator.pushNamed(context, '/login'); // Go to login if not logged in
+      } else {
+        Navigator.pushNamed(context, '/profile'); // Go to profile if logged in
+      }
+    },
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.green[600],
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 6,
+            offset: Offset(2, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.white,
+            child: Text(
+              name == null || name!.isEmpty ? "G" : name![0].toUpperCase(),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name == null || name!.isEmpty ? "Guest" : name!,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  mobile == null || mobile!.isEmpty ? "Login Now" : mobile!,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 18),
+        ],
+      ),
+    ),
+  ),
+),
+
+          const Text(
+            "OR",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+
 
           // ---------- JOIN CLASS BANNER ----------
           Padding(
